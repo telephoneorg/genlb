@@ -1,0 +1,30 @@
+[Unit]
+Description=Generic Load Balancer
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=always
+ExecStartPre=-/usr/bin/docker stop %n
+ExecStartPre=-/usr/bin/docker rm %n
+ExecStartPre=/usr/bin/docker pull callforamerica/genlb
+ExecStart=/usr/local/bin/systemd-docker --cgroups name=systemd run \
+    --rm --name %n \
+    -p "80:80" \
+    --env-file /etc/default/genlb.env \
+    --cap-add NET_ADMIN \
+    --cap-add SYS_NICE \
+    --cap-add SYS_RESOURCE \
+    --memory-swappiness=0 \
+    callforamerica/genlb
+
+Restart=always
+RestartSec=5s
+Type=notify
+NotifyAccess=all
+TimeoutStartSec=120
+TimeoutStopSec=15
+
+[Install]
+WantedBy=multi-user.target

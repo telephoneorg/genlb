@@ -1,0 +1,11 @@
+---
+target: /etc/nginx/conf.d/upstream-one.conf
+owner: nginx
+mode: 644
+---
+
+upstream one {
+{% for server in env.get('UPSTREAM_SERVERS').split(',') %}
+    server {{ server }};
+{% endfor %}
+}

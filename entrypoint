@@ -1,0 +1,7 @@
+#!/bin/bash
+
+set -e
+
+tmpld /templates/*.j2
+
+exec nginx
